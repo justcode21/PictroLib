@@ -3,14 +3,13 @@ int main(int argc, char *argv[])
 {
     ImageManager *manager = new ImageManager();
     Image *image = new Image();
-    if(image->initialize("Images/cameraman", "bmp"))
+    if(image->initialize("Images/fruits.bmp", Image::Color::RGB))
     {
         manager->setImage(image);
-        image->applyContrast();
-        image->writeImage("Images/cameraman_high_contrast", "bmp");
-
-//        image->writeImage("Images/cameraman_copy2", "bmp");
-    }
+        image->applySepia();
+        image->writeImage("Images/cameraman_blured.bmp");    }
 
     return 0;
 }
+
+

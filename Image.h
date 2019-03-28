@@ -14,14 +14,33 @@
 class Image
 {
 public:
+
+    enum Direction
+    {
+        LEFT,
+        RIGHT,
+        UPSIDEDOWN,
+        MIRROR
+    };
+
+    enum Color
+    {
+        BLACKWHITE = 1,
+        RGB = 3
+    };
+
     Image();
     virtual ~Image();
     Image(const Image &image);
-    virtual bool initialize(const std::string &path, const std::string &type);
-    virtual bool writeImage(const std::string &path, const std::string &type);
-    virtual void increaseBrightness(unsigned char factor);
-    virtual void decreaseBrightness(unsigned char factor);
+    virtual bool initialize(const std::string &path, const Color &color);
+    virtual bool writeImage(const std::string &path);
+    virtual void rotate(const Direction &direction);
+    virtual void increaseBrightness(const unsigned char &factor);
+    virtual void decreaseBrightness(const unsigned char &factor);
     virtual void applyContrast();
+    virtual void applyNegetive();
+    virtual void applyBlur();
+    virtual void applySepia();
 
 private:
     void read(unsigned int length, unsigned char *buffer, std::ifstream &fin);
@@ -33,7 +52,8 @@ private:
     unsigned char m_bitDepth;
     unsigned int m_height;
     unsigned int m_width;
-    unsigned char *m_imageData;
+    unsigned char **m_imageData;
+    unsigned int m_color;
 };
 
 #endif // IMAGE_H
