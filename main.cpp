@@ -6,8 +6,6 @@ int main(int argc, char *argv[])
     if(image->initialize("Images/cameraman", "bmp"))
     {
         manager->setImage(image);
-        image->decreaseBrightness(50);
-
         image->writeImage("Images/cameraman_copy2", "bmp");
     }
 

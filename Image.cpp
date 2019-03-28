@@ -39,15 +39,15 @@ bool Image::initialize(const std::string &path, const std::string &type)
         return false;
     }
     read(HEADER_SIZE, m_header, fin);
-    m_bitDepth = *(int *)(&m_header[28]);
+    m_bitDepth = *(reinterpret_cast<int *>(&m_header[28]));
 
     if(m_bitDepth <= BIT_DEPTH_SIZE)
     {
         read(COLOR_TABLE_SIZE, m_colorTable, fin);
     }
 
-    m_width = *(int *)(&m_header[18]);
-    m_height = *(int *)(&m_header[22]);
+    m_width = *(reinterpret_cast<int *>(&m_header[18]));
+    m_height = *(reinterpret_cast<int *>(&m_header[22]));
 
     if(m_imageData != nullptr)
     {
@@ -105,7 +105,7 @@ void Image::read(unsigned int length, unsigned char *buffer, std::ifstream &fin)
 {
     while(length--)
     {
-        *(buffer++) = (unsigned char)fin.get();
+        *(buffer++) = fin.get();
     }
 }
 
