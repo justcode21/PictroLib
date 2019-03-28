@@ -6,7 +6,10 @@ int main(int argc, char *argv[])
     if(image->initialize("Images/cameraman", "bmp"))
     {
         manager->setImage(image);
-        image->writeImage("Images/cameraman_copy2", "bmp");
+        image->applyContrast();
+        image->writeImage("Images/cameraman_high_contrast", "bmp");
+
+//        image->writeImage("Images/cameraman_copy2", "bmp");
     }
 
     return 0;

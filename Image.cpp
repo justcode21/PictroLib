@@ -1,4 +1,5 @@
 #include "Image.h"
+#include <algorithm>
 
 Image::Image()
 {
@@ -100,6 +101,32 @@ void Image::decreaseBrightness(unsigned char factor)
     }
 }
 
+void Image::applyContrast()
+{
+    float *eqHistogram = new float[NO_OF_GREYSCALES], sum = 0;
+    for(int i = 0; i < NO_OF_GREYSCALES; i++)
+    {
+        eqHistogram[i] = 0;
+    }
+
+    float *histogram = computeHistogram();
+    for(int i = 0; i < NO_OF_GREYSCALES; i++)
+    {
+        sum = 0;
+        for(int j = 0; j <= i; j++)
+        {
+            sum += histogram[j];
+        }
+        eqHistogram[i] = 255 * sum + 0.5;
+    }
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        m_imageData[i] = (int)eqHistogram[m_imageData[i]];
+    }
+    delete [] histogram;
+    delete [] eqHistogram;
+    computeHistogram();
+}
 
 void Image::read(unsigned int length, unsigned char *buffer, std::ifstream &fin)
 {
@@ -116,6 +143,26 @@ void Image::write(unsigned int length, unsigned char *buffer, std::ofstream &fou
         fout <<*(buffer++);
     }
 }
+
+float* Image::computeHistogram()
+{
+    float *histogram = new float[NO_OF_GREYSCALES], sum = 0;
+    for(int i = 0; i < NO_OF_GREYSCALES; i++)
+    {
+        histogram[i] = 0;
+    }
+    for(int i = 0; i < m_height * m_width; i++)
+    {
+        histogram[m_imageData[i]]++;
+        sum++;
+    }
+    for(int i = 0; i < NO_OF_GREYSCALES; i++)
+    {
+        histogram[i] /= (float)sum;
+    }
+    return histogram;
+}
+
 
 
 

@@ -9,6 +9,7 @@
 #define COLOR_TABLE_SIZE 1024
 #define MAX_BRIGHTNESS 255
 #define MIN_BRIGHTNESS 0
+#define NO_OF_GREYSCALES 256
 
 class Image
 {
@@ -20,10 +21,12 @@ public:
     virtual bool writeImage(const std::string &path, const std::string &type);
     virtual void increaseBrightness(unsigned char factor);
     virtual void decreaseBrightness(unsigned char factor);
+    virtual void applyContrast();
 
 private:
     void read(unsigned int length, unsigned char *buffer, std::ifstream &fin);
     void write(unsigned int length, unsigned char *buffer, std::ofstream &fout);
+    float* computeHistogram();
 
     unsigned char m_header[HEADER_SIZE];
     unsigned char m_colorTable[COLOR_TABLE_SIZE];
