@@ -352,6 +352,49 @@ void Image::applyEdgeDetection(const MASK &type)
     delete [] edgeDetectedImage;
 }
 
+void Image::generateNoise(const float &variance, const float &mean)
+{
+    for(int i = 0; i < m_height * m_width; i++)
+    {
+        for(int j = 0; j < m_color; j++)
+        {
+            float noise = sqrt(2 * variance * log(100000.0 - (float)rand()/32767.1));
+            float theta = (float)rand() * 1.9175345e-4 - 3.14159265;
+            noise = noise * cos(theta);
+            noise = noise + mean;
+            if(noise > MAX_BRIGHTNESS){noise = MAX_BRIGHTNESS;}
+            if(noise < MIN_BRIGHTNESS){noise = MIN_BRIGHTNESS;}
+            m_imageData[i][j] = noise + 0.5;
+        }
+    }
+}
+
+void Image::generateSaltAndPeperNoise(const float &intensity)
+{
+    if(intensity <0 || intensity > 1)
+    {
+        std::cerr << "Please give the values in the range of 0 to 1";
+    }
+     int first = intensity * 32768/2;
+     int second = first + 16384;
+     int third = 16384 - first;
+     for(int i = 0; i < m_height * m_width; i++)
+     {
+         for(int j = 0; j < m_color; j++)
+         {
+             first = rand();
+             if(first >= 16348 && first < second)
+             {
+                 m_imageData[i][j] = 0;
+             }
+             if(first > third && first < 16384)
+             {
+                 m_imageData[i][j] = 255;
+             }
+         }
+     }
+}
+
 float* Image::computeHistogram()
 {
     float *histogram = new float[NO_OF_GREYSCALES], sum = 0;
