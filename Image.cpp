@@ -48,12 +48,18 @@ bool Image::initialize(const std::string &path, const Color &color)
     {
         return false;
     }
-    read(HEADER_SIZE, m_header, fin);
+    for(int i = 0; i < HEADER_SIZE; i++)
+    {
+        m_header[i] = fin.get();
+    }
     m_bitDepth = *(reinterpret_cast<int *>(&m_header[28]));
 
     if(m_bitDepth <= BIT_DEPTH_SIZE)
     {
-        read(COLOR_TABLE_SIZE, m_colorTable, fin);
+        for(int i = 0; i < COLOR_TABLE_SIZE; i++)
+        {
+            m_colorTable[i] = fin.get();
+        }
     }
 
     m_width = *(reinterpret_cast<int *>(&m_header[18]));
@@ -83,11 +89,17 @@ bool Image::initialize(const std::string &path, const Color &color)
 bool Image::writeImage(const std::string &path)
 {
     std::ofstream fout(path , std::ios::binary | std::ios::out);
-    write(HEADER_SIZE, m_header, fout);
+    for(int i = 0; i < HEADER_SIZE; i++)
+    {
+        fout << m_header[i];
+    }
 
     if(m_bitDepth <= BIT_DEPTH_SIZE)
     {
-        write(COLOR_TABLE_SIZE, m_colorTable, fout);
+        for(int i = 0; i < COLOR_TABLE_SIZE; i++)
+        {
+            fout << m_colorTable[i];
+        }
     }
     if(m_imageData != nullptr)
     {
@@ -108,7 +120,7 @@ bool Image::writeImage(const std::string &path)
     return true;
 }
 
-void Image::rotate(const Image::Direction &direction)
+void Image::rotate(const Direction &direction)
 {
     unsigned char **rotatedImageData = new unsigned char*[m_width * m_height];
     for(int i = 0; i < m_width * m_height; i++)
@@ -234,10 +246,6 @@ void Image::applyNegetive()
 
 void Image::applyBlur()
 {
-    float kernalFilter[3][3] = {{1.0/9.0, 1.0/9.0, 1.0/9.0},
-                                {1.0/9.0, 1.0/9.0, 1.0/9.0},
-                                {1.0/9.0, 1.0/9.0, 1.0/9.0}};
-
     for(int i = 1; i < m_height - 1; i++)
     {
         for(int j = 1 ; j < m_width - 1; j++)
@@ -256,7 +264,7 @@ void Image::applyBlur()
                 {
                     for(int k = 0; k < m_color; k++)
                     {
-                        sum[k] += kernalFilter[x + 1][y + 1] * m_imageData[(i + x) * m_width + (j + y)][k];
+                        sum[k] += KERNAL_FILTER[x + 1][y + 1] * m_imageData[(i + x) * m_width + (j + y)][k];
                     }
                 }
             }
@@ -294,20 +302,56 @@ void Image::applySepia()
     }
 }
 
-void Image::read(unsigned int length, unsigned char *buffer, std::ifstream &fin)
+void Image::applyEdgeDetection(const MASK &type)
 {
-    while(length--)
+    unsigned char **edgeDetectedImage = new unsigned char*[m_width * m_height];
+    for(int i = 0; i < m_width * m_height; i++)
     {
-        *(buffer++) = fin.get();
+        edgeDetectedImage[i] = new unsigned char[m_color];
     }
-}
+    for(int i = 1; i < m_height - 1; i++)
+    {
+        for(int j = 1 ; j < m_width - 1; j++)
+        {
+            int *sum = new int[m_color];
 
-void Image::write(unsigned int length, unsigned char *buffer, std::ofstream &fout)
-{
-    while(length--)
-    {
-        fout <<*(buffer++);
+            for(int k = 0; k < m_color; k++)
+            {
+                sum[k] = 0;
+            }
+            for(int x = -1 ; x <= 1; x++)
+            {
+                for(int y = -1; y <= 1; y++)
+                {
+                    for(int k = 0; k < m_color; k++)
+                    {
+                        sum[k] += LINE_DETECTION_MASKS[type][x + 1][y + 1] * m_imageData[(y + i) * m_width + (x + j)][k];
+                    }
+                }
+            }
+            for(int k = 0; k < m_color; k++)
+            {
+                if(sum[k] > MAX_BRIGHTNESS){sum[k] = MAX_BRIGHTNESS;}
+                if(sum[k] < MIN_BRIGHTNESS){sum[k] = MIN_BRIGHTNESS;}
+                edgeDetectedImage[(long)i * m_width + j][k] = sum[k];
+            }
+            delete [] sum;
+
+        }
     }
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        for(int k = 0; k < m_color; k++)
+        {
+            m_imageData[i][k] = edgeDetectedImage[i][k];
+        }
+
+    }
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        delete [] edgeDetectedImage[i];
+    }
+    delete [] edgeDetectedImage;
 }
 
 float* Image::computeHistogram()

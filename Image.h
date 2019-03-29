@@ -1,33 +1,13 @@
 #include <fstream>
 #include <iostream>
+#include "Constants.h"
 
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#define BIT_DEPTH_SIZE 8
-#define HEADER_SIZE 54
-#define COLOR_TABLE_SIZE 1024
-#define MAX_BRIGHTNESS 255
-#define MIN_BRIGHTNESS 0
-#define NO_OF_GREYSCALES 256
-
 class Image
 {
 public:
-
-    enum Direction
-    {
-        LEFT,
-        RIGHT,
-        UPSIDEDOWN,
-        MIRROR
-    };
-
-    enum Color
-    {
-        BLACKWHITE = 1,
-        RGB = 3
-    };
 
     Image();
     virtual ~Image();
@@ -41,10 +21,10 @@ public:
     virtual void applyNegetive();
     virtual void applyBlur();
     virtual void applySepia();
+    virtual void applyEdgeDetection(const MASK &mask);
 
 private:
-    void read(unsigned int length, unsigned char *buffer, std::ifstream &fin);
-    void write(unsigned int length, unsigned char *buffer, std::ofstream &fout);
+
     float* computeHistogram();
 
     unsigned char m_header[HEADER_SIZE];
@@ -54,6 +34,7 @@ private:
     unsigned int m_width;
     unsigned char **m_imageData;
     unsigned int m_color;
+
 };
 
 #endif // IMAGE_H

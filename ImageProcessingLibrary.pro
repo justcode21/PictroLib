@@ -26,4 +26,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     Image.h \
-    ImageManager.h
+    ImageManager.h \
+    ../../Downloads/ImageProcessingLib -LineDetector/include/ImageProcessing.h \
+    Constants.h
