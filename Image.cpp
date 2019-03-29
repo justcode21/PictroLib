@@ -300,7 +300,142 @@ void Image::applySepia()
     }
 }
 
-void Image::applyEdgeDetection(const MASK &type)
+void Image::applyMaxFilter(const unsigned char &area)
+{
+    unsigned char **maxedImageData = new unsigned char*[m_width * m_height];
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        maxedImageData[i] = new unsigned char[m_color];
+    }
+    for(int i = area/2; i < m_height - area/2; i++)
+    {
+        for(int j = area/2; j < m_width - area/2; j++)
+        {
+            for(int k = 0; k < m_color; k++)
+            {
+                unsigned char maximum = MIN_BRIGHTNESS;
+                for(int x = -area/2; x <= area/2; x++)
+                {
+                    for(int y = -area/2; y <= area/2; y++)
+                    {
+                        maximum = std::max(maximum, m_imageData[(i + x) * m_width + (j + y)][k]);
+                    }
+                }
+
+                //set the maximum value
+                maxedImageData[i * m_width + j][k] = maximum;
+            }
+        }
+    }
+
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        for(int k = 0; k < m_color; k++)
+        {
+            m_imageData[i][k] = maxedImageData[i][k];
+        }
+
+    }
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        delete [] maxedImageData[i];
+    }
+    delete [] maxedImageData;
+}
+
+void Image::applyMinFilter(const unsigned char &area)
+{
+    unsigned char **minImageData = new unsigned char*[m_width * m_height];
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        minImageData[i] = new unsigned char[m_color];
+    }
+
+    for(int i = area/2; i < m_height - area/2; i++)
+    {
+        for(int j = area/2; j < m_width - area/2; j++)
+        {
+            for(int k = 0; k < m_color; k++)
+            {
+                unsigned char minimum = MAX_BRIGHTNESS;
+                for(int x = -area/2; x <= area/2; x++)
+                {
+                    for(int y = -area/2; y <= area/2; y++)
+                    {
+                        minimum = std::min(minimum, m_imageData[(i + x) * m_width + (j + y)][k]);
+                    }
+                }
+
+                //set the maximum value
+                minImageData[i * m_width + j][k] = minimum;
+            }
+        }
+    }
+
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        for(int k = 0; k < m_color; k++)
+        {
+            m_imageData[i][k] = minImageData[i][k];
+        }
+
+    }
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        delete [] minImageData[i];
+    }
+    delete [] minImageData;
+}
+
+void Image::applyMedianFilter(const unsigned char &area)
+{
+    unsigned char **medianImageData = new unsigned char*[m_width * m_height];
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        medianImageData[i] = new unsigned char[m_color];
+    }
+
+    for(int i = area/2; i < m_height - area/2; i++)
+    {
+        for(int j = area/2; j < m_width - area/2; j++)
+        {
+            for(int k = 0; k < m_color; k++)
+            {
+                unsigned char *buffer = new unsigned char[area * area];
+                int index = 0;
+                for(int x = -area/2; x <= area/2; x++)
+                {
+                    for(int y = -area/2; y <= area/2; y++)
+                    {
+                        buffer[index++] = m_imageData[(i + x) * m_width + (j + y)][k];
+                    }
+                }
+
+                //set the maximum value
+                std::sort(buffer, buffer + index);
+                medianImageData[i * m_width + j][k] = buffer[index / 2];
+                delete [] buffer;
+            }
+        }
+    }
+
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        for(int k = 0; k < m_color; k++)
+        {
+            m_imageData[i][k] = medianImageData[i][k];
+        }
+
+    }
+    for(int i = 0; i < m_width * m_height; i++)
+    {
+        delete [] medianImageData[i];
+    }
+    delete [] medianImageData;
+}
+
+
+void Image::applyMask(const MASK &type)
 {
     unsigned char **edgeDetectedImage = new unsigned char*[m_width * m_height];
     for(int i = 0; i < m_width * m_height; i++)
@@ -375,24 +510,24 @@ void Image::generateSaltAndPeperNoise(const float &intensity)
     {
         std::cerr << "Please give the values in the range of 0 to 1";
     }
-     int first = intensity * 32768/2;
-     int second = first + 16384;
-     int third = 16384 - first;
-     for(int i = 0; i < m_height * m_width; i++)
-     {
-         for(int j = 0; j < m_color; j++)
-         {
-             first = rand();
-             if(first >= 16348 && first < second)
-             {
-                 m_imageData[i][j] = 0;
-             }
-             if(first > third && first < 16384)
-             {
-                 m_imageData[i][j] = 255;
-             }
-         }
-     }
+    int first = intensity * 32768/2;
+    int second = first + 16384;
+    int third = 16384 - first;
+    for(int i = 0; i < m_height * m_width; i++)
+    {
+        for(int j = 0; j < m_color; j++)
+        {
+            first = rand() % (32768);
+            if(first >= 16384 && first < second)
+            {
+                m_imageData[i][j] = 0;
+            }
+            if(first >= third && first < 16384)
+            {
+                m_imageData[i][j] = 255;
+            }
+        }
+    }
 }
 
 float* Image::computeHistogram()
@@ -416,7 +551,3 @@ float* Image::computeHistogram()
     }
     return histogram;
 }
-
-
-
-

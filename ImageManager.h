@@ -12,7 +12,6 @@ public:
     virtual bool setImage(Image *image);
 
 private:
-
     Image *m_image;
 };
 

@@ -3,13 +3,12 @@ int main(int argc, char *argv[])
 {
     ImageManager *manager = new ImageManager();
     Image *image = new Image();
-    if(image->initialize("Images/houses.bmp", Color::BLACKWHITE))
+    if(image->initialize("Images/girlface.bmp", Color::BLACKWHITE))
     {
         manager->setImage(image);
-        image->generateSaltAndPeperNoise(0.6);
-        image->writeImage("Images/cameraman_blured.bmp");    }
+        image->applyMask(IMAGE_SHARPNER);
+        image->writeImage("Images/girlface_sharp.bmp");    }
 
     return 0;
 }
-
 

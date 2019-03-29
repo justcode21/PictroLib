@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 #include "Constants.h"
 
 #ifndef IMAGE_H
@@ -22,7 +23,10 @@ public:
     virtual void applyNegetive();
     virtual void applyBlur();
     virtual void applySepia();
-    virtual void applyEdgeDetection(const MASK &mask);
+    virtual void applyMaxFilter(const unsigned char &area);
+    virtual void applyMinFilter(const unsigned char &area);
+    virtual void applyMedianFilter(const unsigned char &area);
+    virtual void applyMask(const MASK &mask);
     virtual void generateNoise(const float &variance, const float &mean);
     virtual void generateSaltAndPeperNoise(const float &intensity);
 

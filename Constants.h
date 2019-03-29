@@ -14,7 +14,7 @@ static const float KERNAL_FILTER[3][3] =  {
     {1.0/9.0, 1.0/9.0, 1.0/9.0}
 };
 
-static const int LINE_DETECTION_MASKS[26][3][3] = {
+static const int LINE_DETECTION_MASKS[27][3][3] = {
 
     //Convolution Masks
     {
@@ -176,6 +176,13 @@ static const int LINE_DETECTION_MASKS[26][3][3] = {
         {0, 1, 0},
         {1, -4, 1},
         {0, 1, 0}
+    },
+
+    //Sharpner
+    {
+        {-1, -1, -1},
+        {-1, 9, -1},
+        {-1, -1, -1}
     }
 };
 
@@ -231,6 +238,9 @@ enum MASK
     //Laplacian Masks
     LAPLACIAN_NEGETIVE,
     LAPLACIAN_POSITIVE,
+
+    //High Pass FIlter(Sharpner)
+    IMAGE_SHARPNER
 };
 
 #endif // CONSTANTS_H
