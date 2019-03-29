@@ -29,3 +29,4 @@ HEADERS += \
     ImageManager.h \
     ../../Downloads/ImageProcessingLib -LineDetector/include/ImageProcessing.h \
     Constants.h
+

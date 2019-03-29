@@ -8,11 +8,15 @@
 #define MIN_BRIGHTNESS 0
 #define NO_OF_GREYSCALES 256
 
-static const float KERNAL_FILTER[3][3] =  {{1.0/9.0, 1.0/9.0, 1.0/9.0},
-                                           {1.0/9.0, 1.0/9.0, 1.0/9.0},
-                                           {1.0/9.0, 1.0/9.0, 1.0/9.0}};
+static const float KERNAL_FILTER[3][3] =  {
+    {1.0/9.0, 1.0/9.0, 1.0/9.0},
+    {1.0/9.0, 1.0/9.0, 1.0/9.0},
+    {1.0/9.0, 1.0/9.0, 1.0/9.0}
+};
 
-static const int LINE_DETECTION_MASKS[4][3][3] = {
+static const int LINE_DETECTION_MASKS[26][3][3] = {
+
+    //Convolution Masks
     {
         {-1,2,-1},
         {-1,2,-1},
@@ -34,7 +38,145 @@ static const int LINE_DETECTION_MASKS[4][3][3] = {
     {
         {-1,-1,2},
         {-1,2,-1},
-        {2,-1,-1}}
+        {2,-1,-1}
+    },
+
+    //Prewitt Masks
+    {
+        {-1,-1,-1},
+        {0, 0, 0},
+        {1, 1, 1}
+    },
+
+    {
+        {-1, 0, 1},
+        {-1, 0, 1},
+        {-1, 0, 1}
+    },
+
+    //Sobel Masks
+    {
+        {-1, -2, -1},
+        {0, 0, 0},
+        {1, 2, 1}
+    },
+
+    {
+        {-1, 0, 1},
+        {-2, 0, 2},
+        {-1, 0, 1}
+    },
+
+    //Robinson Masks
+    {
+        {-1, 0, 1},
+        {-2, 0, 2},
+        {-1, 0, 1}
+    },
+
+    {
+        {-2, -1, 0},
+        {-1, 0, 1},
+        {0, 1, 2}
+    },
+
+    {
+        {-1, -2, -1},
+        {0, 0, 0},
+        {1, 2, 1}
+    },
+
+    {
+        {0, -1, -2},
+        {1, 0, -1},
+        {2, 1, 0}
+    },
+
+    {
+        {1, 0, -1},
+        {2, 0, -2},
+        {1, 0, 1}
+    },
+
+    {
+        {2, 1, 0},
+        {1, 0, -1},
+        {0, -1, -2}
+    },
+
+    {
+        {1, 2, 1},
+        {0, 0, 0},
+        {-1, -2, -1}
+    },
+
+    {
+        {0, 1, 2},
+        {-1, 0, 1},
+        {-2, -1, 0}
+    },
+
+    //Kirsch Masks
+    {
+        {5, 5, 5},
+        {-3, 0, -3},
+        {-3, -3, -3}
+    },
+
+    {
+        {-3, 5, 5},
+        {-3, 0, 5},
+        {-3, -3, -3}
+    },
+
+    {
+        {-3, -3, 5},
+        {-3, 0, 5},
+        {-3, -3, 5}
+    },
+
+    {
+        {-3, -3, 5},
+        {-3, 0, 5},
+        {-3, 5, 5}
+    },
+
+    {
+        {-3, -3, -3},
+        {-3, 0, -3},
+        {5, 5, 5}
+    },
+
+    {
+        {-3, -3, -3},
+        {5, 0, -3},
+        {5, 5, -3}
+    },
+
+    {
+        {5, -3, -3},
+        {5, 0, -3},
+        {5, -3, -3}
+    },
+
+    {
+        {5, 5, -3},
+        {5, 0, -3},
+        {-3, -3, -3}
+    },
+
+    //laplacian Masks
+    {
+        {0, -1, 0},
+        {-1, 4, -1},
+        {0, -1, 0}
+    },
+
+    {
+        {0, 1, 0},
+        {1, -4, 1},
+        {0, 1, 0}
+    }
 };
 
 enum Direction
@@ -56,8 +198,39 @@ enum MASK
     LINE_DETECTOR_HOR_MASK,
     LINE_DETECTOR_VER_MASK,
     LINE_DETECTOR_LDIA_MASK,
-    LINE_DETECTOR_RDIA_MASK
-};
+    LINE_DETECTOR_RDIA_MASK,
 
+    //Prewitt Masks
+    PREWITT_HOR,
+    PREWITT_VER,
+
+    //Sobel Masks
+    SOBEL_HOR,
+    SOBEL_VER,
+
+    //Robinson Masks(Compass Operator)
+    ROBINSON_NORTH,
+    ROBINSON_NORTHEAST,
+    ROBINSON_EAST,
+    ROBINSON_SOUTHEAST,
+    ROBINSON_SOUTH,
+    ROBINSON_SOUTHWEST,
+    ROBINSON_WEST,
+    ROBINSON_NORTHWEST,
+
+    //Kirsch Masks(Compass Operator)
+    KIRSCH_NORTH,
+    KIRSCH_NORTHEAST,
+    KIRSCH_EAST,
+    KIRSCH_SOUTHEAST,
+    KIRSCH_SOUTH,
+    KIRSCH_SOUTHWEST,
+    KIRSCH_WEST,
+    KIRSCH_NORTHWEST,
+
+    //Laplacian Masks
+    LAPLACIAN_NEGETIVE,
+    LAPLACIAN_POSITIVE,
+};
 
 #endif // CONSTANTS_H

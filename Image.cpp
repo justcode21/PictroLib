@@ -82,7 +82,6 @@ bool Image::initialize(const std::string &path, const Color &color)
         }
     }
     fin.close();
-
     return true;
 }
 
@@ -186,7 +185,6 @@ void Image::increaseBrightness(const unsigned char &factor)
             int increasedPixel = m_imageData[i][j] + factor;
             m_imageData[i][j] = increasedPixel > MAX_BRIGHTNESS ? 255 : increasedPixel;
         }
-
     }
 }
 
@@ -363,7 +361,6 @@ float* Image::computeHistogram()
     }
     for(int i = 0; i < m_height * m_width; i++)
     {
-        //Possible Error
         for(int j = 0; j < m_color; j++)
         {
             histogram[m_imageData[i][j]]++;

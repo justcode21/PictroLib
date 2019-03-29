@@ -34,7 +34,6 @@ private:
     unsigned int m_width;
     unsigned char **m_imageData;
     unsigned int m_color;
-
 };
 
 #endif // IMAGE_H
