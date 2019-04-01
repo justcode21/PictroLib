@@ -1,9 +1,8 @@
 ## PictroLib
-PictroLib is a classic crossplatform image processing library developed to be integrated as a backend for Image editing applications.
-It can perform the basic operations on both Black-White and coloured images and can also be extended to add more functionalitites depending 
-on the need of the application.
+PictroLib is a classic crossplatform image processing library developed to be integrated as a backend for an image editing application 
+that I plan to make. It can perform the basic operations on both Black-White and coloured images and can also be extended to add more functionalitites depending on the need of the application.
 
-Currently it supports only .BMP files and has the appropriate mechanism to read and parse the image data. Some features include - 
+Currently it supports only .BMP files and has the appropriate mechanisms to read, parse and manipulate the image data. Some features include - 
 
 ### Rotation/Mirror
 The current implementation support the followings directions.
