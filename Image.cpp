@@ -469,7 +469,6 @@ void Image::applyMask(const MASK &type)
                 edgeDetectedImage[(long)i * m_width + j][k] = sum[k];
             }
             delete [] sum;
-
         }
     }
     for(int i = 0; i < m_width * m_height; i++)
